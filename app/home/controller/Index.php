@@ -10,6 +10,9 @@ class Index
     public function index()
     {
         dump(config('wx'));
-        dump(url('home/wx/callback', [], false, true)->build());
+        dump(session('wechat_user'));
+        dump(session('target_url'));
+        session('aa', 11);
+        dump(session('aa'));
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace app\home\controller;
 
-use think\Request;
+use think\facade\Request;
 use think\facade\View;
 
 class Plot extends Wx
@@ -15,7 +15,6 @@ class Plot extends Wx
     {
         parent::initialize();
         $oauth = $this->wx->oauth;
-
         // 未登录
         if (empty(session('wechat_user'))) {
 
