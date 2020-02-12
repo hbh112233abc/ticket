@@ -68,11 +68,14 @@ class Wx extends \app\BaseController
      */
     public function menu()
     {
+        $current = $this->wx->menu->current();
+        dump($current);
+        // die;
         //管理员
         $buttons = [
             [
                 "type" => "view",
-                "name" => "小区管理",
+                "name" => "我的小区",
                 "url" => url('home/plot/index', [], false, true)->build(),
             ],
             [
@@ -91,7 +94,7 @@ class Wx extends \app\BaseController
                     [
                         "type" => "view",
                         "name" => "通行记录",
-                        "key" => url('home/tick/record', [], false, true)->build(),
+                        "url" => url('home/tick/record', [], false, true)->build(),
                     ],
                 ],
             ],
@@ -108,5 +111,15 @@ class Wx extends \app\BaseController
      */
     public function callback()
     {
+        $oauth = $this->wx->oauth;
+
+        // 获取 OAuth 授权结果用户信息
+        $user = $oauth->user();
+
+        $_SESSION['wechat_user'] = $user->toArray();
+
+        $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
+
+        return redirect($targetUrl);
     }
 }
