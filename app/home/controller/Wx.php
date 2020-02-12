@@ -3,6 +3,7 @@
 namespace app\home\controller;
 
 use EasyWeChat\Factory;
+use EasyWeChat\Kernel\Messages\Transfer;
 
 class Wx extends \app\BaseController
 {
@@ -50,8 +51,62 @@ class Wx extends \app\BaseController
             // ...
         });
 
+        // 转发收到的消息给客服
+        $app->server->push(function ($message) {
+            return new Transfer();
+        });
+
         $response = $this->wx->server->serve();
         // 将响应输出
         return $response->send();
+    }
+
+    /**
+     * 设置菜单
+     *
+     * @return void
+     */
+    public function menu()
+    {
+        //管理员
+        $buttons = [
+            [
+                "type" => "view",
+                "name" => "小区管理",
+                "url" => url('home/plot/index', [], false, true)->build(),
+            ],
+            [
+                "name"       => "通行证",
+                "sub_button" => [
+                    [
+                        "type" => "view",
+                        "name" => "我家通行证",
+                        "url"  => url('home/tick/mine', [], false, true)->build(),
+                    ],
+                    [
+                        "type" => "view",
+                        "name" => "访客通行证",
+                        "url"  => url('home/tick/guest', [], false, true)->build(),
+                    ],
+                    [
+                        "type" => "view",
+                        "name" => "通行记录",
+                        "key" => url('home/tick/record', [], false, true)->build(),
+                    ],
+                ],
+            ],
+        ];
+        $res = $this->wx->menu->create($buttons);
+        dump($res);
+    }
+
+
+    /**
+     * 获取用户信息的回调
+     *
+     * @return void
+     */
+    public function callback()
+    {
     }
 }

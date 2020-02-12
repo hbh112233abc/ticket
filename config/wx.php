@@ -63,6 +63,6 @@ return [
      */
     'oauth' => [
         'scopes'   => ['snsapi_userinfo'],
-        'callback' => url('home/Wx/callback')->build(),
+        'callback' => url('home/wx/callback', [], false, true)->build(),
     ],
 ];
