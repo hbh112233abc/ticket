@@ -8,7 +8,7 @@ class Wx extends \app\BaseController
 {
     protected $wx;
 
-    function initialize()
+    protected function initialize()
     {
         $config = config('wx');
         $this->wx = Factory::officialAccount($config);
