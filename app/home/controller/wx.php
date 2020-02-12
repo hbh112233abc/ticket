@@ -6,18 +6,18 @@ use EasyWeChat\Factory;
 
 class Wx extends \app\BaseController
 {
-    protected $app;
+    protected $wx;
 
     function __construct()
     {
         parent::__construct();
         $config = config('wx');
-        $this->app = Factory::officialAccount($config);
+        $this->wx = Factory::officialAccount($config);
     }
 
     public function index()
     {
-        $response = $app->server->serve();
+        $response = $this->wx->server->serve();
 
         // 将响应输出
         return $response->send();
