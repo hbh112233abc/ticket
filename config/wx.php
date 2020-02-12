@@ -28,13 +28,13 @@ return [
             // 测试环境
             'dev' => [
                 'driver' => 'single',
-                'path' => runtime_path() . '/log/easywechat.log',
+                'path' => runtime_path() . 'log/easywechat.log',
                 'level' => 'debug',
             ],
             // 生产环境
             'prod' => [
                 'driver' => 'daily',
-                'path' => runtime_path() . '/log/easywechat.log',
+                'path' => runtime_path() . 'log/easywechat.log',
                 'level' => 'info',
             ],
         ],
@@ -63,6 +63,6 @@ return [
      */
     'oauth' => [
         'scopes'   => ['snsapi_userinfo'],
-        'callback' => url('home/wx/callback', [], false, true)->build(),
+        'callback' => 'home/Wx/callback',
     ],
 ];

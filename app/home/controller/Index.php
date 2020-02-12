@@ -6,8 +6,10 @@ namespace app\home\controller;
 
 class Index
 {
+    //http://www.tk.com/home/index/index
     public function index()
     {
-        dump(url('home/tick/mine', [], false, true)->build());
+        dump(config('wx'));
+        dump(url('home/wx/callback', [], false, true)->build());
     }
 }

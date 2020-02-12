@@ -52,7 +52,7 @@ class Wx extends \app\BaseController
         });
 
         // 转发收到的消息给客服
-        $app->server->push(function ($message) {
+        $this->wx->server->push(function ($message) {
             return new Transfer();
         });
 
@@ -116,9 +116,9 @@ class Wx extends \app\BaseController
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user();
 
-        $_SESSION['wechat_user'] = $user->toArray();
+        session('wechat_user',$user->toArray());
 
-        $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
+        $targetUrl = empty(session('target_url') ? '/' : session('target_url')
 
         return redirect($targetUrl);
     }
