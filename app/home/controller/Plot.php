@@ -38,6 +38,11 @@ class Plot extends Wx
         return View::fetch();
     }
 
+    public function view()
+    {
+        return View::fetch();
+    }
+
     /**
      * 小区二维码
      *
@@ -54,6 +59,23 @@ class Plot extends Wx
      */
     public function create()
     {
+        if (Request::isAjax()) {
+            $data = Request::post();
+            $plotId = Db::name('plot')->strict(false)->insertGetId($data);
+            $people = [
+                'plot_id' => $plotId,
+                'group_id' => 1,
+                'room' => '0',
+                'username' => $this->user['name'],
+                'tel' => $data['tel'],
+                'openid' => $this->user['id'],
+            ];
+            $res = Db::name('people')->strict(false)->insert($people);
+            if (empty($res)) {
+                return json(['code' => 0, 'message' => '创建失败']);
+            }
+            return json(['code' => 1, 'url' => url('home/plot/view', ['id' => $plotId])]);
+        }
         View::assign('user', $this->user);
         return View::fetch();
     }
@@ -65,6 +87,14 @@ class Plot extends Wx
      */
     public function edit()
     {
+        if (Reqeust::isAjax()) {
+            $data = Request::post();
+            $res = Db::name('plot')->strict(false)->save($data);
+            if (empty($res)) {
+                return json(['code' => 0, 'message' => '修改失败']);
+            }
+            return json(['code' => 1, 'url' => url('home/plot/view', ['id' => $data['id']])]);
+        }
         $plotId = Request::param('id', 0);
         if (empty($plotId)) {
             return '请选择小区';
