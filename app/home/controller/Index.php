@@ -9,10 +9,11 @@ class Index
     //http://www.tk.com/home/index/index
     public function index()
     {
-        dump(config('wx'));
-        dump(session('wechat_user'));
-        dump(session('target_url'));
-        session('aa', 11);
-        dump(session('aa'));
+        // dump(config('wx'));
+        // dump(session('wechat_user'));
+        // dump(session('target_url'));
+        // session('aa', 11);
+        // dump(session('aa'));
+        return view();
     }
 }

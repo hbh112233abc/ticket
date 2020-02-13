@@ -27,6 +27,7 @@ class Plot extends Wx
     public function index()
     {
         dump($this->user);
+        return View::fetch();
     }
 
     /**
