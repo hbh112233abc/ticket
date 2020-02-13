@@ -8,8 +8,8 @@
 <body ontouchstart="">
 
     <header class="demos-header">
-        <h1 class="demos-title">{$plot.title|未入驻小区}</h1>
-        <p class="demos-sub-title">{$plot.address|未知地址}</p>
+        <h1 class="demos-title">{$plot.title|default='未入驻小区'}</h1>
+        <p class="demos-sub-title">{$plot.address|default='未知地址'}</p>
         {notempty name="plot"}
         <div class="button_sp_area">
             <a href="{:url('home/plot/create')}" class="weui-btn weui-btn_mini weui-btn_primary">创建小区</a>
