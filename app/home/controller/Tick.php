@@ -8,7 +8,7 @@ use think\Request;
 
 class Tick extends Wx
 {
-    protected $middleware = [app\home\middleware\WxAuth::class];
+    protected $middleware = [\app\home\middleware\WxAuth::class];
 
     protected $user;
 

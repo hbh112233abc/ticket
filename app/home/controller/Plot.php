@@ -9,7 +9,7 @@ use think\facade\View;
 
 class Plot extends Wx
 {
-    protected $middleware = [app\home\middleware\WxAuth::class];
+    protected $middleware = [\app\home\middleware\WxAuth::class];
     protected $user;
 
     protected function initialize()
