@@ -10,12 +10,12 @@
     <header class="demos-header">
         <h1 class="demos-title">{$plot.title|default='未入驻小区'}</h1>
         <p class="demos-sub-title">{$plot.address|default='未知地址'}</p>
-        {notempty name="plot"}
+        {empty name="plot"}
         <div class="button_sp_area">
             <a href="{:url('home/plot/create')}" class="weui-btn weui-btn_mini weui-btn_primary">创建小区</a>
             <a href="{:url('home/plot/into')}" class="weui-btn weui-btn_mini weui-btn_default">入驻小区</a>
         </div>
-        {/notempty}
+        {/empty}
     </header>
 
     <div class="weui-grids">
