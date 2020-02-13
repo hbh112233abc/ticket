@@ -6,6 +6,7 @@ namespace app\home\controller;
 
 use think\facade\Request;
 use think\facade\View;
+use think\facade\Db;
 
 class Plot extends Wx
 {
@@ -17,7 +18,7 @@ class Plot extends Wx
         parent::initialize();
 
         // 已经登录过
-        $this->user = session('wechat_user');
+        $this->user = session('wechat_user') ?? [];
     }
     /**
      * 小区首页
@@ -26,7 +27,14 @@ class Plot extends Wx
      */
     public function index()
     {
-        dump($this->user);
+        $people = Db::name('people')->where('openid', $this->user['id'])->find();
+        $plot = [];
+        if (!empty($people)) {
+            $plot = Db::name('plot')->where('id', $people['plot_id'])->find();
+        }
+        View::assign('user', $this->user);
+        View::assign('plot', $plot);
+        View::assign('people', $plot);
         return View::fetch();
     }
 
@@ -46,6 +54,8 @@ class Plot extends Wx
      */
     public function create()
     {
+        View::assign('user', $this->user);
+        return View::fetch();
     }
 
     /**
@@ -55,6 +65,16 @@ class Plot extends Wx
      */
     public function edit()
     {
+        $plotId = Request::param('id', 0);
+        if (empty($plotId)) {
+            return '请选择小区';
+        }
+        $plot = Db::name('plot')->where('id', $plotId)->find();
+        if (empty($plot)) {
+            return '未找到小区';
+        }
+        View::assign('plot', $plot);
+        return View::fetch('create');
     }
 
     /**

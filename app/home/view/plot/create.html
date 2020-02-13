@@ -1,0 +1,73 @@
+{extend name="public/base"/}
+{block name="title"}
+我的小区
+{/block}
+{block name="main"}
+<body ontouchstart="">
+
+    <header class="demos-header">
+      <h1 class="demos-title">{empty name="plot"}创建{else/}修改{/empty}小区</h1>
+    </header>
+    <form action="{$Request.url}" method="post">
+        {notempty name="plot"}
+            <input type="hidden" name="id" value="{$plot.id}">
+        {/notempty}
+        <div class="weui-cells__title">小区信息</div>
+        <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">小区名称</label></div>
+            <div class="weui-cell__bd">
+            <input class="weui-input" name="title" type="text" value="{$plot.title|default=''}" placeholder="请输入小区名称">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">小区地址</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" name="address" type="text" value="{$plot.address|default=''}"
+                    placeholder="请输入小区地址">
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">联系人</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" name="contact" type="text" value="{$plot.contact|default=$user['name']}" placeholder="请输入小区地址">
+            </div>
+        </div>
+        <div class="weui-cell weui-cell_vcode">
+            <div class="weui-cell__hd">
+            <label class="weui-label">手机号</label>
+            </div>
+            <div class="weui-cell__bd">
+            <input class="weui-input" name="tel" type="tel" value="{$plot.tel|default=''}" placeholder="请输入手机号">
+            </div>
+        </div>
+        </div>
+    </form>
+
+    <div class="weui-btn-area">
+      <a class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips">确定</a>
+    </div>  
+
+</body>
+{/block}
+{block name="js"}
+    <script>
+        $("#showTooltips").click(function () {
+            var tel = $('#tel').val();
+            if (!tel || !/1[3|4|5|7|8]\d{9}/.test(tel)){
+                 $.toptip('请输入手机号');
+                 return;
+            }
+            var form = $('form');
+            var action = form.attr('action');
+            var input = form.find('input').serialize();
+            $.post(action,input,function(res){
+                if(res.code){
+                    $.toptip('提交成功', 'success');
+                    location.href = res.url;
+                }
+                $.toptip('提交失败:'+res.msg);
+            });
+        });
+    </script>
+{/block}

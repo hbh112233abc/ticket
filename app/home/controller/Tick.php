@@ -21,6 +21,17 @@ class Tick extends Wx
     }
 
     /**
+     * 通行证首页
+     *
+     * @return void
+     */
+    public function index()
+    {
+
+        return view();
+    }
+
+    /**
      * 我家通行证
      *
      * @return \think\Response
