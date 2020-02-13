@@ -116,9 +116,9 @@ class Wx extends \app\BaseController
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user();
 
-        session('wechat_user',$user->toArray());
+        session('wechat_user', $user->toArray());
 
-        $targetUrl = empty(session('target_url') ? '/' : session('target_url')
+        $targetUrl = empty(session('target_url')) ? '/' : session('target_url');
 
         return redirect($targetUrl);
     }
