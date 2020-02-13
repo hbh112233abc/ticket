@@ -9,20 +9,12 @@ use think\facade\View;
 
 class Plot extends Wx
 {
+    protected $middleware = [app\home\middleware\WxAuth::class];
     protected $user;
 
     protected function initialize()
     {
         parent::initialize();
-        $oauth = $this->wx->oauth;
-        // 未登录
-        if (empty(session('wechat_user'))) {
-
-            session('target_url', Request::url(true));
-
-            // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
-            $oauth->redirect()->send();
-        }
 
         // 已经登录过
         $this->user = session('wechat_user');

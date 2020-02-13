@@ -8,6 +8,18 @@ use think\Request;
 
 class Tick extends Wx
 {
+    protected $middleware = [app\home\middleware\WxAuth::class];
+
+    protected $user;
+
+    protected function initialize()
+    {
+        parent::initialize();
+
+        // 已经登录过
+        $this->user = session('wechat_user');
+    }
+
     /**
      * 我家通行证
      *
