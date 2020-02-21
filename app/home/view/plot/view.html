@@ -1,0 +1,81 @@
+{extend name="public/base"/}
+{block name="title"}
+小区:{$plot.title}
+{/block}
+{block name="css"}
+<style>
+    #qrcode {
+        text-align: center;
+    }
+</style>
+{/block}
+{block name="main"}
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">{$plot.title|default='小区名称'}</h1>
+        <div id="qrcode"></div>
+        <p class="demos-sub-title">扫描二维码,入驻小区</p>
+    </header>
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells__title">小区信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区名称</p>
+                    </div>
+                    <div class="weui-cell__ft">{$plot.title|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区地址</p>
+                    </div>
+                    <div class="weui-cell__ft">{$plot.address|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>管理员</p>
+                    </div>
+                    <div class="weui-cell__ft">{$plot.contact|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>电话</p>
+                    </div>
+                    <div class="weui-cell__ft">{$plot.tel|default=''}</div>
+                </div>
+            </div>
+            {notempty name="people"}
+            <div class="weui-cells__title">个人信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>昵称</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.username|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>房间</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.room|default=''}</div>
+                </div>
+            </div>
+            {/notempty}
+        </div>
+    </div>
+    {empty name="people"}
+        <div class="demos-content-padded">
+            <a href="{:url('home/plot/into',['id'=>$plot['id']],false,true)->build()}"
+                class="weui-btn weui-btn_primary">入驻小区</a>
+        </div>
+    {/empty}
+    
+</body>
+{/block}
+{block name="js"}
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script>
+    $('#qrcode').qrcode("{:url('home/plot/into',['id'=>$plot['id']],false,true)->build()}");
+</script>
+{/block}

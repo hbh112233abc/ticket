@@ -65,4 +65,8 @@ return [
         'scopes'   => ['snsapi_userinfo'],
         'callback' => 'home/Wx/callback',
     ],
+
+    'notify' => [
+        'new_into' => 'yubYOx42lPRvu8iJTm0LLav2FiF6IrLRrMTz8Nr6-Qs',
+    ],
 ];
