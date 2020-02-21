@@ -13,15 +13,13 @@ use think\exception\ValidateException;
 
 use app\common\lib\Notify;
 
-class Plot extends Wx
+class Plot
 {
-    // protected $middleware = [\app\home\middleware\WxAuth::class];
+    protected $middleware = [\app\home\middleware\WxAuth::class];
     protected $user;
 
-    protected function initialize()
+    function __construct()
     {
-        // parent::initialize();
-
         // 已经登录过
         $this->user = session('wechat_user') ?? ['name' => 'hbh', 'id' => 11];
     }
