@@ -1,0 +1,160 @@
+{extend name="public/base"/}
+{block name="title"}我的通行证{/block}
+
+{block name="css"}
+<style>
+    #qrcode {
+        text-align: center;
+    }
+</style>
+{/block}
+{block name="main"}
+
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">{$qr.plot.title|default=$people.plot.title}</h1>
+        {empty name="qr.id"}
+            <div class="weui-msg">
+                <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+                <div class="weui-msg__text-area">
+                    <h2 class="weui-msg__title">请提交信息生成访客二维码</h2>
+                </div>
+            </div>
+        {else/}
+            <div id="qrcode"></div>
+            <p class="demos-sub-title">访客二维码,进入小区请出示此二维码</p>
+        {/empty}
+    </header>
+    <div class="bd">
+        <div class="page__bd">
+            <!-- <div class="weui-cells__title">小区信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区名称</p>
+                    </div>
+                    <div class="weui-cell__ft">{$qr.plot.title|default=$people.plot.title}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区地址</p>
+                    </div>
+                    <div class="weui-cell__ft">{$qr.plot.address|default=$people.plot.address}</div>
+                </div>
+            </div> -->
+            {notempty name="people"}
+            <div class="weui-cells__title">邀请人信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>角色</p>
+                    </div>
+                    <div class="weui-cell__ft">{$qr.people.group.title|default=$people.group.title}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>姓名</p>
+                    </div>
+                    <div class="weui-cell__ft">{$qr.people.username|default=$people.username}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>电话</p>
+                    </div>
+                    <div class="weui-cell__ft">{$qr.people.tel|default=$people.tel}</div>
+                </div>
+                {notempty name="qr"}
+                    {eq name="qr.people.group_id" value="4"}
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>房间</p>
+                        </div>
+                        <div class="weui-cell__ft">{$qr.people.room|default=''}</div>
+                    </div>
+                    {/eq}
+                {else/}
+                    {eq name="people.group_id" value="4"}
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <p>房间</p>
+                        </div>
+                        <div class="weui-cell__ft">{$people.room|default=''}</div>
+                    </div>
+                    {/eq}
+                {/notempty}
+            </div>
+            {/notempty}
+
+            <div class="weui-cells__title">访客信息</div>
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label for="date" class="weui-label">到访原因</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" id="reason" name="content[reason]" type="text"
+                            value="{$qr['content']['reason']|default=''}" readonly="" placeholder="请选择到访原因" {notempty name="qr.id"}{neq
+                            name="qr.user_id" value="$people['id']"}disabled{/neq}{/notempty}>
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">访客数量</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="content[number]" type="text" value="{$qr['content']['number']|default=1}" placeholder="请输入访客数量" {notempty
+ name="qr.id"}{neq name="qr.user_id" value="$people['id']"}disabled{/neq}{/notempty}>
+                    </div>
+                </div>                
+                <input type="hidden" name="id" value="{$qr.id}">
+            </div>
+        </div>        
+        {empty name="qr.id"}
+            <div class="weui-btn-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">提交</a>
+            </div>
+        {else/}
+            {eq name="qr.user_id" value="$people['id']"}
+            <div class="weui-btn-area">
+                <a class="weui-btn weui-btn_primary" href="javascript:" id="submit">修改</a>
+            </div>
+            {/eq}
+        {/empty}
+    </div>
+
+</body>
+{/block}
+{block name="js"}
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script>
+    {notempty name="qr.id"}
+        $('#qrcode').qrcode({foreground:'#FF9933',text:"{:url('home/tick/check',['qr_id'=>$qr['id']],false,true)->build()}"});
+    {/notempty}
+
+    $("#reason").picker({
+        title: "选择到访原因",
+        cols: [{
+            textAlign: 'center',
+            values: ['亲朋做客','送货上门','装饰装修','维护保养','其他'],
+        }],
+        onChange: function (p, v, dv) {
+            console.log(p, v, dv);
+        },
+        onClose: function (p, v, d) {
+            console.log("close");
+        }
+    });
+
+    $('#submit').click(function(e){
+        $(e).prop('disabled',true);
+        var input = $('input').serialize();
+        $.post("{:url('home/tick/guest')}",input,function(res){
+            if(res.code){
+                $.toptip('提交成功', 'success');
+                location.href = res.url;
+                return;
+            }
+            $.toptip(res.msg);
+        });
+        $(e).prop('disabled',false);
+    });
+    
+</script>
+
+{/block}

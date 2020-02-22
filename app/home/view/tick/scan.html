@@ -1,0 +1,56 @@
+{extend name="public/base"/}
+{block name="title"}
+扫码认证
+{/block}
+{block name="css"}
+    {include file="public/wx"/}
+{/block}
+{block name="main"}
+
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">{$people.plot.title|default='小区名称'}</h1>
+        <p class="demos-sub-title">扫描二维码,认证通行二维码</p>
+    </header>
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells__title">小区信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区名称</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.plot.title|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区地址</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.plot.address|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>值班人</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.username|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>电话</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.tel|default=''}</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="demos-content-padded">
+        <a href="javascript:scan();" class="weui-btn weui-btn_primary">扫码认证</a>
+    </div>
+</body>
+{/block}
+{block name="js"}
+    <script>
+        //调用微信扫码接口
+    </script>
+{/block}

@@ -1,0 +1,77 @@
+{extend name="public/base"/}
+{block name="title"}访客的通行证{/block}
+
+{block name="css"}
+<style>
+    #qrcode {
+        text-align: center;
+    }
+</style>
+{/block}
+{block name="main"}
+
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">{$people.plot.title|default='小区名称'}</h1>
+        <div id="qrcode"></div>
+        <p class="demos-sub-title">进入小区请出示此二维码</p>
+    </header>
+    <div class="bd">
+        <div class="page__bd">
+            <!-- <div class="weui-cells__title">小区信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区名称</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.plot.title|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>小区地址</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.plot.address|default=''}</div>
+                </div>
+            </div> -->
+            {notempty name="people"}
+            <div class="weui-cells__title">个人信息</div>
+            <div class="weui-cells">
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>人员角色</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.group.title|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>通行人员</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.username|default=''}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>电话</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.tel|default=''}</div>
+                </div>
+                {eq name="people.group_id" value="4"}
+                <div class="weui-cell">
+                    <div class="weui-cell__bd">
+                        <p>房间</p>
+                    </div>
+                    <div class="weui-cell__ft">{$people.room|default=''}</div>
+                </div>
+                {/eq}
+            </div>
+            {/notempty}
+        </div>
+    </div>
+
+</body>
+{/block}
+{block name="js"}
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+<script>
+    $('#qrcode').qrcode({foreground:'#6666CC',text:"{:url('home/tick/check',['qr_id'=>$qr['id']],false,true)->build()}"});
+</script>
+{/block}

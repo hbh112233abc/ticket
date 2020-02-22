@@ -17,14 +17,6 @@ use app\common\lib\Notify;
 
 class Plot extends Base
 {
-    protected $user;
-
-    function __construct()
-    {
-        // 已经登录过
-        $this->user = session('wechat_user') ?? ['name' => 'hbh', 'id' => 'o2VKivzAd8i51MDbVICYAYJMbGTQ'];
-        View::assign('user', $this->user);
-    }
     /**
      * 小区首页
      *

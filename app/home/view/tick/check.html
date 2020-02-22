@@ -1,0 +1,105 @@
+{extend name="public/base"/}
+{block name="title"}通行验证{/block}
+
+{block name="main"}
+
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">{$qr.type_text|default=''}</h1>
+        <p class="demos-sub-title"></p>
+    </header>
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells__title">通行信息</div>
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label for="date" class="weui-label">通行原因</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" id="reason" name="reason" type="text"
+                            value="{$qr['content']['reason']|default='日常出行'}" readonly="" placeholder="请选择通行原因">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">人员数量</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="people_num" type="text"
+                            value="{$qr['content']['number']|default=1}" placeholder="请输入人员数量">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="username" type="text"
+                            value="{$qr.people.username|default=''}" placeholder="请输入人员姓名">
+                    </div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">电话</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="tel" type="text"
+                            value="{$qr.people.tel|default=''}" placeholder="请输入电话">
+                    </div>
+                </div>
+                {eq name="qr.people.group_id" value="4"}
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">房间</label></div>
+                        <div class="weui-cell__bd">
+                            <input class="weui-input" name="room" type="text" value="{$qr.people.room|default=''}"
+                                placeholder="请输入房间">
+                        </div>
+                    </div>
+                {/eq}
+                <div class="weui-cells weui-cells_form">
+                    <div class="weui-cell">
+                        <div class="weui-cell__bd">
+                            <textarea class="weui-textarea" name="remark" placeholder="请输入备注信息" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="qr_id" value="{$qr.id|default=''}">
+    <input type="hidden" name="plot_id" value="{$people.plot_id}">
+    <input type="hidden" name="state" value="">
+    <div class="weui-btn-area">
+        <a class="weui-btn weui-btn_primary" href="javascript:submit(this,1);">允许通行</a>
+        <a class="weui-btn weui-btn_warn" href="javascript:submit(this,-1);">拒绝通行</a>
+    </div>
+
+</body>
+{/block}
+{block name="js"}
+<script>   
+    $("#reason").picker({
+        title: "请选择",
+        cols: [{
+            textAlign: 'center',
+            values: ['日常出行','亲朋做客', '送货上门', '装饰装修', '维护保养', '其他'],
+        }],
+        onChange: function (p, v, dv) {
+            console.log(p, v, dv);
+        },
+        onClose: function (p, v, d) {
+            console.log("close");
+        }
+    });
+    function submit(obj,state){
+        $(obj).prop('disabled',true);
+        $('input[name="state"]').val(state);
+        var input = $('input').serialize();
+        $.post("{:url('home/tick/check')}", input, function (res) {
+            if (res.code) {
+                $.alert('提交成功', 'success',function(){
+                    location.href = res.url;
+                });
+                return;
+            }
+            $.toptip(res.msg);
+        });
+        $(obj).prop('disabled',false);
+    }
+</script>
+
+{/block}
