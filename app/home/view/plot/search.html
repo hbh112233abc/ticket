@@ -1,0 +1,76 @@
+{extend name="public/base"/}
+{block name="title"}查找小区{/block}
+{block name="main"}
+<body ontouchstart>
+    <div class="weui-search-bar" id="searchBar">
+        <form class="weui-search-bar__form" action="{$Request.url}">
+            <div class="weui-search-bar__box">
+                <i class="weui-icon-search"></i>
+                <input type="search" class="weui-search-bar__input" id="searchInput" name="keyword" placeholder="搜索" required="">
+                <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+            </div>
+            <label class="weui-search-bar__label" id="searchText"
+                style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
+                <i class="weui-icon-search"></i>
+                <span>搜索</span>
+            </label>
+        </form>
+        <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+    </div>
+
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells__title">查找小区</div>
+            <div class="weui-cells" id="searchResult">
+                
+            </div>
+            {notempty name="nearPlot"}
+                <div class="weui-cells__title">附近小区</div>
+                <div class="weui-cells">
+                    {volist name="nearPlot" id="vo"}
+                    <a class="weui-cell weui-cell_access" href="{$vo.url}">
+                        <div class="weui-cell__bd">
+                            <p>{$vo.title}</p>
+                        </div>
+                        <div class="weui-cell__ft">{$vo.address}</div>
+                    </a>                
+                    {/volist}
+                </div>
+            {/notempty}
+        </div>
+    </div>
+</body>
+{/block}
+{block name="js"}
+<script>
+    var form = $('form');
+    var action = form.prop('action');
+    $("#searchInput").change(function (e) {
+        submit();
+    });
+    form.submit(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        submit();
+    });
+
+    function submit(){
+        var key = $.trim($('#searchInput').val());
+        if (key == '') {
+            return;
+        }        
+        var input = form.find('input').serialize();
+        $.post(action, input, function (res) {
+            if (res.code) {                
+                var html = ''
+                $.each(res.data,function(i,v){
+                    html = html + '<a class="weui-cell weui-cell_access" href="'+v.url+'"><div class="weui-cell__bd"><p>'+v.title+'</p></div><div class="weui-cell__ft">'+v.address+'</div></a>';                    
+                });
+                $('#searchResult').html(html);
+                return;
+            }
+            $.toptip('提交失败:' + res.msg);
+        });
+    }    
+</script>
+{/block}

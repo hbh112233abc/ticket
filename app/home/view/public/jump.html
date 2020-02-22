@@ -1,0 +1,45 @@
+{extend name="public/base"/}
+{block name="main"}
+<body ontouchstart="">
+
+    <div class="weui-msg">
+        {switch code}
+            {case 1}
+                <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+                <div class="weui-msg__text-area">
+                    <h2 class="weui-msg__title">{$msg|default="操作提示"}</h2>
+                    <p class="weui-msg__desc">页面自动 <a id="href" href="{$url}">跳转</a> 等待时间： <b
+                            id="wait">{$wait|default='2'}</b></p>
+                </div>
+            {/case}
+            {case 0}
+                <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+                <div class="weui-msg__text-area">
+                    <h2 class="weui-msg__title">{$msg|default="操作提示"}</h2>
+                    <p class="weui-msg__desc">页面自动 <a id="href" href="{$url}">跳转</a> 等待时间： <b
+                            id="wait">{$wait|default='2'}</b></p>
+                </div>
+            {/case}
+        {/switch}
+                
+        {include file="public/footer"/}
+    </div>
+
+</body>
+{/block}
+
+{block name="js"}
+<script>
+    (function(){
+        var wait = document.getElementById('wait'),
+            href = document.getElementById('href').href;
+        var interval = setInterval(function(){
+            var time = --wait.innerHTML;
+            if(time <= 0) {
+                location.href = href;
+                clearInterval(interval);
+            };
+        }, 1000);
+    })();
+</script>
+{/block}

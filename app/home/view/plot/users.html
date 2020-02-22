@@ -1,0 +1,118 @@
+{extend name="public/base"/}
+{block name="title"}小区人员{/block}
+{block name="main"}
+<body ontouchstart>
+    <div class="weui-tab">
+        <div class="weui-navbar">
+            <a class="weui-navbar__item {notempty name='waitCheckList'}weui-bar__item--on{/notempty}" href="#tab1">
+                待审核
+            </a>
+            <a class="weui-navbar__item {empty name='waitCheckList'}weui-bar__item--on{/empty}" href="#tab2">
+                物业人员
+            </a>
+            <a class="weui-navbar__item" href="#tab3">
+                业主住户
+            </a>
+        </div>
+        <div class="weui-tab__bd">
+            <div id="tab1"
+                class="weui-tab__bd-item {notempty
+                name='waitCheckList'}weui-tab__bd-item--active{/notempty}">
+                <div class="weui-cells weui-cells_checkbox">
+                    {volist name="waitCheckList" id="vo"}
+                        <label class="weui-cell weui-check__label" for="s1_{$vo.id}">
+                            <div class="weui-cell__hd">
+                                <input type="checkbox" class="weui-check" name="people_ids" value="{$vo.id}"  id="s1_{$vo.id}">
+                                <i class="weui-icon-checked"></i>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <p>[{$vo.group.title}] {neq name="vo.room" value="0"}<span class="weui-badge"
+                                        style="margin-left: 5px;">{$vo.room}</span>{/neq} {$vo.username} {$vo.tel}</p>
+                            </div>
+                        </label>
+                    {/volist}                                       
+                </div>
+            </div>
+            <div id="tab2" class="weui-tab__bd-item {empty
+                name='waitCheckList'}weui-tab__bd-item--active{/empty}">
+                <div class="weui-cells weui-cells_checkbox">
+                {volist name="propertList" id="vo"}
+                    <label class="weui-cell weui-check__label" for="s2_{$vo.id}">
+                        <div class="weui-cell__hd">
+                            <input type="checkbox" class="weui-check" name="people_ids" value="{$vo.id}" {eq name="vo.openid" value="$user['id']"}disabled{/eq} id="s2_{$vo.id}">
+                            <i class="weui-icon-checked"></i>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <p>[{$vo.group.title}] {neq name="vo.room" value="0"}<span class="weui-badge"
+                                    style="margin-left: 5px;">{$vo.room}</span>{/neq} {$vo.username} {$vo.tel}</p>
+                        </div>
+                    </label>
+                {/volist}
+                </div>
+            </div>
+            <div id="tab3" class="weui-tab__bd-item">
+                <div class="weui-cells weui-cells_checkbox">
+                {volist name="ownerList" id="vo"}
+                    <label class="weui-cell weui-check__label" for="s3_{$vo.id}">
+                        <div class="weui-cell__hd">
+                            <input type="checkbox" class="weui-check" name="people_ids" value="{$vo.id}" id="s3_{$vo.id}"
+                                checked="">
+                            <i class="weui-icon-checked"></i>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <p>{neq name="vo.room" value="0"}<span class="weui-badge"
+                                    style="margin-left: 5px;">{$vo.room}</span>{/neq} {$vo.username} {$vo.tel}</p>
+                        </div>
+                    </label>
+                {/volist}
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="plot_id" value="{$Request.param.plot_id}">
+        <input type="hidden" name="state" value="">
+        <div class="weui-tabbar">            
+            <a href="javascript:pass();" class="weui-tabbar__item">
+                <i class="weui-icon-success"></i>
+                <p class="weui-tabbar__label">审核通过</p>
+            </a>
+            <a href="javascript:refuse();" class="weui-tabbar__item">
+                <i class="weui-icon-cancel"></i>
+                <p class="weui-tabbar__label">拒绝通过</p>
+            </a>
+        </div>
+    </div>
+
+    
+</body>
+{/block}
+
+{block name="js"}
+<script>
+    //切换标签页,列表需重新选择
+    $('.weui-navbar__item').click(function(e){
+        $('input:checkbox').prop('checked',false);
+    });
+    function pass(){
+        $('input[name="state"]').val(1);
+        submit();
+    }
+    function refuse(){
+        $('input[name="state"]').val(2);
+        submit();
+    }
+    function submit(){
+        if($('input:checked').length < 1){
+            $.toptip('请先选择用户');
+            return;
+        }
+        var input = $('input').serialize();
+        $.post("{:url('home/plot/check')}",input,function(res){
+            if (res.code) {
+                $.toptip(res.msg,'success',1);
+                location.reload();
+            }
+            $.toptip(res.msg);
+        });
+    }
+</script>
+{/block}

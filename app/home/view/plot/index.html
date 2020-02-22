@@ -15,23 +15,23 @@
     <header class="demos-header">
         <h1 class="demos-title">{$plot.title|default='未入驻小区'}</h1>
         <p class="demos-sub-title">{$plot.address|default='未知地址'}</p>
-        {empty name="plot"}
-        <div class="header-button">
-            <div class="button_sp_area">
-                <a href="{:url('home/plot/create')}" class="weui-btn weui-btn_mini weui-btn_primary">创建小区</a>
-                <a href="{:url('home/plot/into')}" class="weui-btn weui-btn_mini weui-btn_default">入驻小区</a>
-            </div>
-        </div>
-        {/empty}
     </header>
-
+    {notempty name="plot"}
     <div class="weui-grids">
-        <a href="{:url('home/plot/view')}" class="weui-grid js_grid">
+        <a href="{:url('home/plot/view',['id'=>$plot['id']])}" class="weui-grid js_grid">
             <div class="weui-grid__icon">
                 <img src="http://jqweui.com/dist/demos/images/icon_nav_calendar.png" alt="">
             </div>
             <p class="weui-grid__label">
                 我的小区
+            </p>
+        </a>
+        <a href="{:url('home/plot/users',['plot_id'=>$plot['id']])}" class="weui-grid js_grid">
+            <div class="weui-grid__icon">
+                <img src="http://jqweui.com/dist/demos/images/icon_nav_panel.png" alt="">
+            </div>
+            <p class="weui-grid__label">
+                人员管理
             </p>
         </a>
         <a href="{:url('home/tick/index')}" class="weui-grid js_grid">
@@ -60,20 +60,15 @@
         </a>
         
     </div>
+    {else}
+        <div class="demos-content-padded">
+            <a href="{:url('home/plot/create')}" class="weui-btn weui-btn_plain-default">创建小区</a>
+            <a href="{:url('home/plot/into')}" class="weui-btn weui-btn_plain-primary">入驻小区</a>
+        </div>
+    {/notempty}
 
 
-    <div class="weui-footer">
-        <p class="weui-footer__links">
-            <a href="http://jqweui.com" class="weui-footer__link">小区二维码通行证</a>
-        </p>
-        <p class="weui-footer__text">Copyright © 2020 huangbinghe</p>
-    </div>
-
-    <style>
-        .weui-footer {
-            margin: 25px 0 10px 0;
-        }
-    </style>
+    {include file="public/footer"/}
 </body>
 {/block}
 {block name="js"}

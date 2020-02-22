@@ -11,17 +11,19 @@ use think\facade\Db;
 use app\home\validate\Plot as PlotValidate;
 use think\exception\ValidateException;
 
+use app\home\model\Plot as PlotModel;
+use app\home\model\People as PeopleModel;
 use app\common\lib\Notify;
 
-class Plot
+class Plot extends Base
 {
-    protected $middleware = [\app\home\middleware\WxAuth::class];
     protected $user;
 
     function __construct()
     {
         // 已经登录过
-        $this->user = session('wechat_user') ?? ['name' => 'hbh', 'id' => 11];
+        $this->user = session('wechat_user') ?? ['name' => 'hbh', 'id' => 'o2VKivzAd8i51MDbVICYAYJMbGTQ'];
+        View::assign('user', $this->user);
     }
     /**
      * 小区首页
@@ -61,6 +63,30 @@ class Plot
     }
 
     /**
+     * 查找小区
+     *
+     * @return void
+     */
+    public function search()
+    {
+        if (Request::isAjax()) {
+            $keyword = Request::param('keyword');
+            $plotList = Db::name('plot')->where('title', 'like', '%' . $keyword . '%')->select()->toArray();
+            if (empty($plotList)) {
+                return json(['code' => 0, 'msg' => '未找到相关小区']);
+            }
+            foreach ($plotList as $k => $plot) {
+                $plotList[$k]['url'] = url('home/plot/into', ['id' => $plot['id']])->build();
+            }
+            return json(['code' => 1, 'msg' => 'success', 'data' => $plotList]);
+        }
+        //TODO 显示附近小区
+        $nearPlot = [];
+        View::assign('nearPlot', $nearPlot);
+        return View::fetch();
+    }
+
+    /**
      * 入驻小区
      *
      * @return void
@@ -79,7 +105,12 @@ class Plot
                 return json(['code' => 0, 'msg' => '角色不存在']);
             }
             $data['group_id'] = $groupArr[$data['group_name']];
+            $data['state'] = 0;
             if (empty($data['id'])) {
+                $people = Db::name('people')->where('openid', $this->user['id'])->find();
+                if (!empty($people)) {
+                    return json(['code' => 0, 'msg' => '已经入驻小区了']);
+                }
                 $res = Db::name('people')->strict(false)->insertGetId($data);
                 $data['id'] = $res;
             } else {
@@ -93,24 +124,15 @@ class Plot
             $notify->newInto($data);
         }
         $plotId = Request::param('id/d', 0);
-        $plot = Db::name('plot')->where('id', $plotId)->find();
-        if (empty($plot)) {
-            return redirect(url('home/plot/search'));
+        $plot = PlotModel::where('id', $plotId)->findOrEmpty();
+        if ($plot->isEmpty()) {
+            return redirect(url('home/plot/search')->build());
         }
         View::assign('plot', $plot);
-        $people = Db::name('people')->where('openid', $this->user['id'])->find();
+        $people = PeopleModel::where('openid', $this->user['id'])->find();
         View::assign('people', $people);
         View::assign('user', $this->user);
         return View::fetch();
-    }
-
-    /**
-     * 小区二维码
-     *
-     * @return \think\Response
-     */
-    public function qr()
-    {
     }
 
     /**
@@ -189,6 +211,7 @@ class Plot
      */
     public function setting()
     {
+        return View::fetch();
     }
 
     /**
@@ -198,6 +221,20 @@ class Plot
      */
     public function users()
     {
+        $plotId = input('plot_id/d', 0);
+        if (empty($plotId)) {
+            return $this->error('请选择小区', url('home/plot/index')->build());
+        }
+        if (!PeopleModel::isAdmin($this->user, $plotId)) {
+            return $this->error('无管理权限', url('home/plot/index')->build());
+        }
+        $waitCheckList = PeopleModel::where('state', 0)->select();
+        View::assign('waitCheckList', $waitCheckList);
+        $propertList = PeopleModel::where('state', 1)->where('group_id', '<>', 4)->select();
+        View::assign('propertList', $propertList);
+        $ownerList = PeopleModel::where('state', 1)->where('group_id', '=', 4)->select();
+        View::assign('ownerList', $ownerList);
+        return View::fetch();
     }
 
     /**
@@ -207,5 +244,22 @@ class Plot
      */
     public function check()
     {
+        $plotId = input('plot_id/d', 0);
+        if (!PeopleModel::isAdmin($this->user, $plotId)) {
+            return json(['code' => 0, 'msg' => '无操作权限']);
+        }
+        $peopleIds = input('people_ids/a', []);
+        if (empty($peopleIds)) {
+            return json(['code' => 0, 'msg' => '请选择用户']);
+        }
+        $state = input('state/d', 0);
+        if (!in_array($state, [-1, 1, 2])) {
+            return json(['code' => 0, 'msg' => '操作错误']);
+        }
+        $res = PeopleModel::check($plotId, $peopleIds, $state);
+        if ($res) {
+            return json(['code' => 1, 'msg' => '操作成功']);
+        }
+        return json(['code' => 0, 'msg' => '操作失败']);
     }
 }

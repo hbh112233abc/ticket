@@ -26,13 +26,16 @@
                         placeholder="请输入小区地址">
                 </div>
             </div>
+        </div>
+        <div class="weui-cells__title">个人信息</div>
+        <div class="weui-cells weui-cells_form">
             <div class="weui-cell">
                 <div class="weui-cell__hd"><label for="date" class="weui-label">角色</label></div>
                 <div class="weui-cell__bd">
-                    <input class="weui-input" id="group" name="group_name" type="text" value="" readonly="">
+                    <input class="weui-input" id="group" name="group_name" type="text" value="{$people['group']['title']|default=''}" readonly="">
                 </div>
             </div>
-            <div class="weui-cell" id="room" style="display: none;">
+            <div class="weui-cell" id="room" style="{empty name="people['room']"}display: none;{/empty}">
                 <div class="weui-cell__hd"><label class="weui-label">房间号</label></div>
                 <div class="weui-cell__bd">
                     <input class="weui-input" name="room" required type="text"
