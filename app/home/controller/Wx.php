@@ -83,8 +83,8 @@ class Wx extends \app\BaseController
                 "sub_button" => [
                     [
                         "type" => "view",
-                        "name" => "我家通行证",
-                        "url"  => url('home/tick/mine', [], false, true)->build(),
+                        "name" => "我的通行证",
+                        "url"  => url('home/tick/index', [], false, true)->build(),
                     ],
                     [
                         "type" => "view",
