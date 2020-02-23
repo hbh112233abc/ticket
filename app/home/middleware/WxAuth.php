@@ -19,12 +19,19 @@ class WxAuth
     {
         $app = Factory::officialAccount(config('wx'));
         $oauth = $app->oauth;
-        session('target_url', $request->url(true));
         if (empty(session('wechat_user'))) {
-            // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
-            return $oauth->redirect()->send();
+            session('target_url', $request->url(true));
+            return redirect($oauth->redirect()->getTargetUrl());
         }
-        session('js_sdk', $app->jssdk->buildConfig(['updateAppMessageShareData', 'updateTimelineShareData'], true));
+        session('js_sdk', $app->jssdk->buildConfig([
+            'updateAppMessageShareData',
+            'updateTimelineShareData',
+            'scanQRCode',
+            'getLocation',
+            'openLocation',
+            'chooseImage',
+            'uploadImage',
+        ], true));
         return $next($request);
     }
 }
