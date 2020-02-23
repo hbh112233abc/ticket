@@ -109,6 +109,9 @@ class Tick extends Base
      */
     public function check()
     {
+        if (!in_array($this->people['group_id'], Group::CHECK_ID)) {
+            return $this->error('无验证权限', url('home/plot/index')->build());
+        }
         if (Request::isAjax()) {
             //提交验证
             $data = input('post.');
@@ -130,11 +133,13 @@ class Tick extends Base
         }
         $qrId = input('qr_id/d', 0);
         $qr = Qrcode::where('id', $qrId)->findOrEmpty();
-        if ($qr->isEmpty()) {
+        if ($qr->isEmpty() && $qrId > 0) {
             return $this->error('通行证无效', url('home/plot/index')->build());
         }
-        if (!Qrcode::hasCheckAuth($this->people, $qr)) {
-            return $this->error('您没有验证权限', url('home/plot/index')->build());
+        if (!$qr->isEmpty()) {
+            if (!Qrcode::hasCheckAuth($this->people, $qr)) {
+                return $this->error('您没有验证权限', url('home/plot/index')->build());
+            }
         }
 
         return view('', ['qr' => $qr]);

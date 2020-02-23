@@ -64,6 +64,9 @@ class Qrcode extends Model
 
     protected function getTypeTextAttr($value, $data)
     {
+        if (empty($data['type'])) {
+            return '普通登记';
+        }
         if ($data['type'] == self::TYPE_GUEST) {
             return '访客';
         }
