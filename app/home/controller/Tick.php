@@ -7,6 +7,7 @@ namespace app\home\controller;
 use app\home\model\People as PeopleModel;
 use app\home\model\Qrcode;
 use app\home\model\Record;
+use app\home\model\Group;
 use think\facade\Request;
 use think\facade\View;
 
@@ -94,6 +95,10 @@ class Tick extends Base
      */
     public function scan()
     {
+        if (!in_array($this->people['group_id'], Group::CHECK_ID)) {
+            return $this->error('无验证权限', url('home/plot/index')->build());
+        }
+
         return view();
     }
 

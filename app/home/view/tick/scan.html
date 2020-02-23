@@ -3,7 +3,7 @@
 扫码认证
 {/block}
 {block name="css"}
-    {include file="public/wx"/}
+{include file="public/wx"/}
 {/block}
 {block name="main"}
 
@@ -41,7 +41,7 @@
                     <div class="weui-cell__ft">{$people.tel|default=''}</div>
                 </div>
             </div>
-            
+
         </div>
     </div>
     <div class="demos-content-padded">
@@ -50,7 +50,21 @@
 </body>
 {/block}
 {block name="js"}
-    <script>
-        //调用微信扫码接口
-    </script>
+<script>
+    var domain = "{$Request.domain}";
+    //调用微信扫码接口
+    wx.scanQRCode({
+        needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+        scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+        success: function (res) {
+            var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+            alert(result);
+            if(result.indexOf(domain) == false){
+                $.toast("无效通行证", "cancel");
+                return;
+            }
+            location.href = result;
+        }
+    });
+</script>
 {/block}
