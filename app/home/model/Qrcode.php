@@ -67,7 +67,8 @@ class Qrcode extends Model
         if ($data['type'] == self::TYPE_GUEST) {
             return '访客';
         }
-        return Group::title($data['people']['group_id']);
+        $groupId = People::where('id', $data['user_id'])->value('group_id');
+        return Group::title($groupId);
     }
 
     /**
