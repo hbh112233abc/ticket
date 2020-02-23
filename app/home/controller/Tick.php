@@ -78,14 +78,44 @@ class Tick extends Base
     }
 
     /**
-     * 通行记录
+     * 通行记录列表
      *
      * @param  \think\Request  $request
      * @return \think\Response
      */
     public function record()
     {
-        //
+        $page = input('page/d', 1);
+        $where = [
+            ['plot_id', '=', $this->people['plot_id']],
+        ];
+        if (!in_array($this->people['group_id'], Group::CHECK_ID)) {
+            $where[] = ['user_id', '=', $this->people['id']];
+        }
+        $list = Record::where($where)->order('create_time desc')->field('id,people_name,create_time')->page($page, 20)->select();
+        if (Request::isAjax()) {
+            if ($list->isEmpty()) {
+                return $this->error('没有更多的数据');
+            }
+            return $this->success('ok', $list);
+        }
+        return view('', ['list' => $list]);
+    }
+
+    /**
+     * 通行记录详情
+     *
+     * @param  \think\Request  $request
+     * @return \think\Response
+     */
+    public function recordInfo()
+    {
+        $id = input('id/d', 0);
+        $info = Record::where('id', $id)->findOrEmpty();
+        if ($info->isEmpty()) {
+            return $this->error('未找到数据');
+        }
+        return $this->success('ok', ['info' => $info]);
     }
 
     /**

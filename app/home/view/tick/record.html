@@ -1,0 +1,115 @@
+{extend name="public/base"/}
+{block name="title"}
+通行记录
+{/block}
+{block name="main"}
+<body ontouchstart>
+    <header class="demos-header">
+        <h1 class="demos-title">通行记录</h1>
+    </header>
+    <div class="bd">
+        <div class="page__bd">
+            <div class="weui-cells" id="list">
+                {volist name="list" id="vo"}
+                <a class="weui-cell weui-cell_access" href="javascript:view({$vo.id});">
+                    <div class="weui-cell__bd">
+                        <p>{$vo.people_name}</p>
+                    </div>
+                    <div class="weui-cell__ft">{$vo.create_time}</div>
+                </a>
+                {/volist}
+            </div>                        
+        </div>
+    </div>
+
+    <div class="weui-loadmore" style="display: none;">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips" id="tips">正在加载</span>
+    </div>
+
+    <div id="half" class="weui-popup__container popup-bottom">
+        <div class="weui-popup__overlay"></div>
+        <div class="weui-popup__modal">
+            <div class="toolbar">
+                <div class="toolbar-inner">
+                    <a href="javascript:;" class="picker-button close-popup">关闭</a>
+                    <h1 class="title">通行记录</h1>
+                </div>
+            </div>
+            <div class="modal-content">
+                <ul id="info"></ul>
+            </div>
+        </div>
+    </div>
+    
+</body>
+{/block}
+{block name="js"}
+<script>
+    //查看详情
+    function view(id){
+        $.showLoading();
+        $.post("{:url('home/tick/recordInfo')}",{id:id},function(res){
+            if(res.code == 0){
+                $.toptip(res.msg);
+                return;
+            }
+            $('#info').html('');
+            var data = res.data.info;
+            var html = '<li>'+data.remark.reason+'</li>';
+                html = html + '<li>姓名:'+data.people_name+'</li>';
+                html = html + '<li>人数:'+data.people_num+'</li>';
+                html = html + '<li>房间:'+data.room+'</li>';
+                html = html + '<li>时间:'+data.create_time+'</li>';
+            $('#info').html(html);
+            $.hideLoading();
+            $.openPopup('#half');
+        });
+    }
+    var page = 1;
+    //滚动加载
+    var loading = false;
+    $(document.body).infinite().on("infinite", function() {
+        if(loading) return;
+        loading = true;
+        page = page + 1;
+        $.post("{$Request.url}",{page:page},function(res){
+            if(res.code){
+                $.each(res.data,function(i,v){
+                    var li = li + '<a class="weui-cell weui-cell_access" href="javascript:view('+v.id+');">';
+                        li = li + '<div class="weui-cell__bd">';
+                            li = li + '<p>'+v.people_name+'</p>';
+                        li = li + '</div>';
+                        li = li + '<div class="weui-cell__ft">'+v.create_time+'</div>';
+                    li = li + '</a>';
+                    $("#list").append(li);
+                });
+                loading = false; 
+            } else {
+                $('#tips').text('没数据了');
+            }
+        });
+    });
+    //下拉刷新
+    /* $(document.body).pullToRefresh(function() {
+        page = 1;
+        $.post("{$Request.url}",{page:page},function(res){
+            if(res.code){
+                $('#list').html('');
+                $.each(res.data,function(i,v){
+                    var li = li + '<a class="weui-cell weui-cell_access" href="javascript:view('+v.id+');">';
+                        li = li + '<div class="weui-cell__bd">';
+                            li = li + '<p>'+v.people_name+'</p>';
+                        li = li + '</div>';
+                        li = li + '<div class="weui-cell__ft">'+v.create_time+'</div>';
+                    li = li + '</a>';
+                    $("#list").append(li);
+                });
+            }
+            $(document.body).pullToRefreshDone();
+        });
+    });    */
+    
+    
+</script>
+{/block}

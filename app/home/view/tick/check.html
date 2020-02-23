@@ -40,15 +40,15 @@
                             value="{$qr.people.tel|default=''}" placeholder="请输入电话">
                     </div>
                 </div>
-                {eq name="qr.people.group_id" value="4"}
-                    <div class="weui-cell">
-                        <div class="weui-cell__hd"><label class="weui-label">房间</label></div>
-                        <div class="weui-cell__bd">
-                            <input class="weui-input" name="room" type="text" value="{$qr.people.room|default=''}"
-                                placeholder="请输入房间">
-                        </div>
+                
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">房间</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" name="room" type="text" value="{$qr.people.room|default=''}"
+                            placeholder="请输入房间">
                     </div>
-                {/eq}
+                </div>
+                
                 <div class="weui-cells weui-cells_form">
                     <div class="weui-cell">
                         <div class="weui-cell__bd">
@@ -62,6 +62,9 @@
     </div>
     <input type="hidden" name="qr_id" value="{$qr.id|default=''}">
     <input type="hidden" name="plot_id" value="{$people.plot_id}">
+    <input type="hidden" name="check_id" value="{$people.id}">
+    <input type="hidden" name="user_id" value="{$qr.people.id|default=0}">
+    <input type="hidden" name="type" value="{$qr.type|default=0}">
     <input type="hidden" name="state" value="">
     <div class="weui-btn-area">
         <a class="weui-btn weui-btn_primary" href="javascript:submit(this,1);">允许通行</a>
