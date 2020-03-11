@@ -16,4 +16,12 @@ class Index
         // dump(session('aa'));
         return view();
     }
+
+    public function sms($mobile = '18759201163')
+    {
+        $sms = new \bingher\sms\AliSms(config('ali_sms'));
+        $res = $sms->code($mobile, ['code' => 1234]);
+        dump($res);
+        dump($sms->getError());
+    }
 }
